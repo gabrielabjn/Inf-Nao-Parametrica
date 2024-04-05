@@ -1,0 +1,188 @@
+---
+title: "Exercício 2.1 - Geração de Amostras"
+author: "Gabriela Paschoal"
+date: '2024-03-25'
+output: pdf_document
+---
+
+## Instruções
+
+<br/>
+
+Lista de exercícios 2.1. Gere amostras das distribuições abaixo. Para cada amostra, construa 3 gráficos: o histograma de densidade mais a função densidade de probabilidade (caso contínuo), função distribuição (empírica e teórica) e função quantil (empírica e teórica). Para as variáveis discretas, fazer apenas gráco de barras das frequências relativas ou histograma de densidade (mais a função de probabilidade) e função distribuição (empírica ee teórica).
+
+<br/>
+
+## Normal
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(666)
+
+plot_normal <- function(n, mu, variance){
+
+unif<-runif(n,0,1)
+amostra<-qnorm(p = unif,mean = mu,sd = sqrt(variance))
+
+# Histograma de Densidade
+
+hist(amostra, freq = FALSE, col = 'lightblue', 
+     main = paste('Densidade de X ~ N(',mu,',',variance,'), para n = ',n), 
+     ylim = c(0,0.45))
+curve(dnorm(x,mu,sqrt(variance)), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'blue', 
+     main = paste('Acumulada Empirica de X ~ N(',mu,',',variance,'), para n = ',n),
+     cex =0.6)
+curve(pnorm(x, mu,sqrt(variance)), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rnorm(n, mu, sqrt(variance))
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qnorm(u, mu, sqrt(variance)),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ N(',mu,',',variance,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'blue')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_normal(50,5,2)
+plot_normal(200,5,2)
+plot_normal(50,100,1)
+
+
+
+```
+
+
+## Exponencial
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(616)
+
+plot_expo <- function(n, lambda){
+
+unif<-runif(n,0,1)
+amostra<-qexp(p = unif,rate = lambda)
+
+# Histograma de Densidade
+
+hist(amostra, freq = FALSE, col = 'lightpink', 
+     main = paste('Densidade de X ~ Exp(',lambda,'), para n = ',n))
+curve(dexp(x,lambda), add = TRUE, col = "red", lwd = 2)
+legend("topright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'pink3', 
+     main = paste('Acumulada Empirica de X ~ Exp(',lambda,'), para n = ',n),
+     cex =0.6)
+curve(pexp(x, lambda), add = TRUE, col = "red", lwd = 2)
+legend("bottomright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rexp(n, lambda)
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qexp(u, lambda),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ Exp(',lambda,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'pink3')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_expo(50,5)
+plot_expo(50,1/5)
+plot_expo(200,5)
+
+
+```
+
+
+## Poisson
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(616)
+
+plot_poi <- function(n, lambda){
+
+unif<-runif(n,0,1)
+amostra<-qpois(p = unif,lambda = lambda)
+
+# Histograma de Densidade
+
+plot(amostra, dpois(amostra, lambda=5), type='h', 
+     main = paste('Densidade de X ~ Poisson(',lambda,'), para n = ',n),
+     col = 'green4', xlab = 'x', ylab = 'fn(x)')
+legend("topright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+x<-rpois(10000, lambda)
+dpoi <- function(x = x, lbd = lambda) dpois(x,lbd)
+curve(dpoi, 0, 100, add = TRUE, lwd = 2, col ='red')
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'green4', 
+     main = paste('Acumulada Empirica de X ~ Poisson(',lambda,'), para n = ',n), 
+     cex =0.6)
+curve(ppois(x, lambda), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rpois(n, lambda)
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qpois(u, lambda),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ Poisson(',lambda,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'green4')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_poi(50,5)
+plot_poi(100,5)
+
+
+
+```
+
+## Consideracoes
+
+<br/>
+
+Percebemos que o tamanho amostral 'n' influencia na proximidade da distribuicao empirica a distribuicao teorica (quanto maior o tamanho, melhor a proximidade).
+
