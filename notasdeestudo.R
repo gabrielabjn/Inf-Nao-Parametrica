@@ -1,0 +1,84 @@
+# 2.3 Testes de Hipotese Bondade de Ajuste -------------------------------------
+
+# testar se uma amostra vem de uma determinada distribuicao
+
+
+# 2.3.1 Teste Qui-quadrado -----------------------------------------------------
+# (va's discretas)
+
+# testa se as diferencas entre os valores esperados e observados de uma tabela 
+# de contingencia sao significativas
+
+# H0: os dados seguem uma dada distribuicao especificada
+# H1: os dados nao seguem a tal distribuicao especificada
+
+#chisq.test(valores observados)
+
+# restricoes: 
+
+#  quando GL = 1, cada freq esperada deve ser pelo menos 5
+#  quando GL > 1, ate 20% das celulas pode possuir freq esperada menor que 5,
+# nenhuma freq esperada pode ser menor que 1.
+
+
+# 2.3.2 Estatisticas tipo Kolmogorov-Smirnov -----------------------------------
+# (va's continuas)
+
+# para distribuicoes especificadas (parametros definidos)
+
+# Kolmogorov-Smirnov -----------------------------------------------------------
+
+# H0: Fx = F0 para todo x real
+# H1: Fx != F0, para algum x
+
+#ks.test(x,pdist,parametros)
+
+# 2.3.3. Anderson-Darling ------------------------------------------------------
+
+# ad.test()
+
+
+# 2.3.4 Testes de Bondade de Ajuste para Familias de Distribuicoes -------------
+
+# testar se os dados vem de dist com parametros desconhecidos
+
+# Testes para Normalidade ------------------------------------------------------
+
+# lillie.test()
+# padroniza a estatistica do ks.test e verifica se o resultado segue uma t(n-1)
+
+# shapiro.test() + poderoso
+# baseia-se nos valores esp e cov das estatisticas de ordem de uma a.a.~ N(0,1)
+
+# dagostino.pearson.test() 
+# testes para assimetria e curtose.
+
+# Teste baseado em Anderson-Darling 
+
+#ad.test{nortest}
+# altera o valor de uma varivael da estatistica do ad.test original
+
+# Cramer-von Mises 
+
+#cvm.test{nortest}
+# outra variacao do ad.test original.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
