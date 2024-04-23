@@ -64,6 +64,51 @@
 # outra variacao do ad.test original.
 
 
+# Teste para Exponencial -------------------------------------------------------
+
+# testar se os dados vem de uma exponencial(1)
+# aplica o ks.test para z = x/x_barra
+# x eh o vetor de dados
+
+
+# Teste de Simetria ------------------------------------------------------------
+
+# symmetry.test{lawstat}
+# H0: dist eh simetrica
+
+# Testes de Aleatoriedade ------------------------------------------------------
+
+# runs.test{pracma}
+# Wald-Wolfowitz Test for Randomness
+# H0: dist eh aleatoria
+
+# bartels.test{lawstat}
+# Bartels's Test for Randomness
+#H0: dist eh aleatoria
+
+
+# Testes Cox-Stuart ------------------------------------------------------------
+
+# Ponto de Mudanca
+
+# variaveis dicotomicas (0,1) e continuas
+
+#H0: Nao ha mudanca abrupta na sequencia dos dados
+#H1: c.c.
+
+
+# Teste de Tendencia (crescente oou decrescente)
+
+# cox.stuart.test{randtests}.
+# H0: aleatoriedade
+# H1: presenca de tendencia (cresc ou decresc)
+
+
+
+
+
+
+
 
 
 
