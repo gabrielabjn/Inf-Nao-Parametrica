@@ -1,0 +1,570 @@
+---
+title: "Exercício 2.1 - Geração de Amostras"
+author: "Gabriela Paschoal"
+date: '2024-03-25'
+output: pdf_document
+---
+
+## Exercícios 2.1 (Gibbons) - Geração de Gráficos de Funções
+
+<br/>
+
+Gere amostras das distribuições abaixo. Para cada amostra, construa 3 gráficos: o histograma de densidade mais a função densidade de probabilidade (caso contínuo), função distribuição (empírica e teórica) e função quantil (empírica e teórica). Para as variáveis discretas, fazer apenas gráco de barras das frequências relativas ou histograma de densidade (mais a função de probabilidade) e função distribuição (empírica ee teórica).
+
+<br/>
+
+## Normal
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(666)
+
+plot_normal <- function(n, mu, variance){
+
+unif<-runif(n,0,1)
+amostra<-qnorm(p = unif,mean = mu,sd = sqrt(variance))
+
+# Histograma de Densidade
+
+hist(amostra, freq = FALSE, col = 'lightblue', 
+     main = paste('Densidade de X ~ N(',mu,',',variance,'), para n = ',n), 
+     ylim = c(0,0.45))
+curve(dnorm(x,mu,sqrt(variance)), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'blue', 
+     main = paste('Acumulada Empirica de X ~ N(',mu,',',variance,'), para n = ',n),
+     cex =0.6)
+curve(pnorm(x, mu,sqrt(variance)), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rnorm(n, mu, sqrt(variance))
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qnorm(u, mu, sqrt(variance)),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ N(',mu,',',variance,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'blue')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_normal(50,5,2)
+plot_normal(200,5,2)
+plot_normal(50,100,1)
+
+
+
+```
+
+
+## Exponencial
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(616)
+
+plot_expo <- function(n, lambda){
+
+unif<-runif(n,0,1)
+amostra<-qexp(p = unif,rate = lambda)
+
+# Histograma de Densidade
+
+hist(amostra, freq = FALSE, col = 'lightpink', 
+     main = paste('Densidade de X ~ Exp(',lambda,'), para n = ',n))
+curve(dexp(x,lambda), add = TRUE, col = "red", lwd = 2)
+legend("topright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'pink3', 
+     main = paste('Acumulada Empirica de X ~ Exp(',lambda,'), para n = ',n),
+     cex =0.6)
+curve(pexp(x, lambda), add = TRUE, col = "red", lwd = 2)
+legend("bottomright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rexp(n, lambda)
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qexp(u, lambda),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ Exp(',lambda,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'pink3')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_expo(50,5)
+plot_expo(50,1/5)
+plot_expo(200,5)
+
+
+```
+
+
+## Poisson
+
+```{r , echo=TRUE,fig.align = 'center', fig.width=6, fig.height=4}
+
+set.seed(616)
+
+plot_poi <- function(n, lambda){
+
+unif<-runif(n,0,1)
+amostra<-qpois(p = unif,lambda = lambda)
+
+# Histograma de Densidade
+
+plot(amostra, dpois(amostra, lambda=5), type='h', 
+     main = paste('Densidade de X ~ Poisson(',lambda,'), para n = ',n),
+     col = 'green4', xlab = 'x', ylab = 'fn(x)')
+legend("topright", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+x<-rpois(10000, lambda)
+dpoi <- function(x = x, lbd = lambda) dpois(x,lbd)
+curve(dpoi, 0, 100, add = TRUE, lwd = 2, col ='red')
+
+
+# Distribuicao Acumulada Empirica
+
+plot(ecdf(amostra), col = 'green4', 
+     main = paste('Acumulada Empirica de X ~ Poisson(',lambda,'), para n = ',n), 
+     cex =0.6)
+curve(ppois(x, lambda), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+
+# Funcao Quantil
+
+x=rpois(n, lambda)
+n=length(x)
+u=seq(0,1,by=1/n)         
+Qn=quantile(x,u)
+plot(u,qpois(u, lambda),type="l", col = "red", lwd = 2, main = 
+       paste('Acumulada Quantilica de X ~ Poisson(',lambda,'), para n = ',n),
+     xlab = 'probs', ylab = 'Qn(x)')
+points(u,Qn,pch=19, cex = 0.6, col = 'green4')
+for (i in 1:n){  
+lines(c(u[i],u[i+1]),c(Qn[i],Qn[i]))
+
+}
+
+legend("topleft", legend = "Distribuição Teórica", col = "red", lwd = 2)
+}
+
+
+plot_poi(50,5)
+plot_poi(100,5)
+
+
+
+```
+
+## Consideracoes
+
+<br/>
+
+Percebemos que o tamanho amostral 'n' influencia na proximidade da distribuicao empirica a distribuicao teorica (quanto maior o tamanho, melhor a proximidade).
+
+## Exercício 4.1 (Gibbons) - Híbridos de Mendel (p. 150)
+
+<br/>
+
+Vamos realizar um teste qui-quadrado, onde:
+
+$$H_0 : \text{Os híbridos da segunda geração seguem a proporção de Mendel;}$$
+$$H_1 : \text{Os híbridos da segunda geração não seguem a proporção de Mendel;}$$
+
+<br/>
+
+```{r, echo = TRUE}
+
+obs<- c(670, 230, 238, 62) # valores observados
+p<- c(9,3,3,1)/16 # probabilidade associada a cada valor (segundo a 
+# hipotese alternativa H1)
+esp<-sum(obs)*p # valores esperados (segundo H1)
+
+# Todos os valores esperados sao maiores que 5
+
+x_2<- sum((esp - obs)**2/esp) # calcula estatistica do teste
+
+p_valor<-1 - pchisq(q = x_2,df = length(obs)-1 )
+
+p_valor # p-valor > 0 .05 --> Não rejeita a hipotese nula
+
+
+```
+
+<br/>
+
+Não rejeitamos a hipótese nula a um nível de significância de 5% (não temos evidências suficientes para rejeitar que a frequência de híbridos segue o proposto por Mendel);
+
+<br/>
+
+## Exercício 4.2 (Gibbons) - As moedas são viciadas? (p. 150)
+
+<br/>
+
+Define-se:
+
+$$H_0: X \sim Binomial(4,\frac{1}{2})$$
+$$H_1: \text{X segue outra distribuição}$$
+<br/>
+
+```{r, echo = TRUE}
+
+x.ind<-seq(0,4)
+x<-c(16,48,55,33,8)
+
+# podemos considerar como se tivessem sido colhidas 160 amostras de tam = 4
+p<-1/2 # prob associada ao resultado 'cara' em cada lançamento (para cada moeda)
+
+p=dbinom(0:4,4,1/2)
+
+Esp<- 160 * p # 160 "amostras" da binomial(n = 4, p = 1/2)
+Esp
+
+# Todos os valores esperados sao maiores que 5;
+
+# Realizar teste Qui-Quadrado
+x2=sum((x-Esp)^2/Esp)
+x2    
+gl= length(x.ind) - 1
+p.valor=1-pchisq(x2,gl)
+p.valor
+
+# p.valor > 0.05 --> nao se rejeita H0.
+
+```
+
+<br/>
+
+Não se rejeita a hipótese nula a 5% de significância. Em outras palavras, não temos evidências suficientes para acreditar que X não siga uma Binomial(4,1/2).
+
+<br/>
+
+## Exercício 4.21 (Gibbons) - A contagem de erros cometidos por um tipógrafo segue uma Poisson? (p. 153)
+
+<br/>
+
+Define-se:
+
+$$H_0: Y \sim Poisson(\frac{4}{1000})$$
+$$H_1: \text{Y segue outra distribuição}$$
+<br/>
+
+Vamos testar a 5% de significância.
+
+<br/>
+
+```{r}
+
+# 100 amostras de tamanho n = 1000 palavras
+
+x.ind<-seq(0,5)
+x<-c(10,16,20,28,12,14)
+
+lambda<-4/1000
+
+p=dpois(0:5,lambda)
+
+Esp=sum(x)*p
+Esp # todas > 5
+
+x_2=sum((x-Esp)^2/Esp)
+x_2
+gl = length(x.ind) - 1 
+
+p.valor= 1 - pchisq(x_2,gl)
+p.valor
+
+# p-valor < 0.05 --> rejeita-se H0.
+
+```
+
+<br/>
+
+O p-valor foi menor que o nível de significância adotado. Em outras palavras, não temos evidência suficiente para acreditar que os dados seguem uma Poisson(0.004).
+
+<br/>
+
+## Exercício 4.25 (Gibbons) - Verificar se as demandas por troca de peça de TV seguem uma Poisson com lambda estimado (p. 153)
+
+<br/>
+
+Vamos testar:
+
+<br/>
+
+$$H_0: X \sim Poisson(\hat{\lambda})$$
+$$H_1: \text{X não segue uma }  Poisson(\hat{\lambda})$$
+
+<br/>
+
+Considerando $$\alpha = 5\%$$
+
+<br/>
+
+```{r}
+
+# Considerando um período de 50 semanas (50 amostras de n = 7)
+
+x.ind<-seq(0:4)
+x<-c(28,15,6,1,0)
+
+lambda.est = sum(x.ind*x)/sum(x)
+
+p0 = dpois(0:3,lambda.est)
+p1 = 1 - ppois(3,lambda.est)
+p = c(p0,p1)
+
+Esp = p*sum(x) # ate um valor esperado pode ser menor que 5
+# nenhum valor esperado eh menor que 1
+
+x_2 = sum((Esp-x)**2/Esp)
+gl = length(x.ind) - 1 - 1 # (m - 1) + (-1) pela estimacao de lambda
+p.valor = 1 - pchisq(x_2,gl)
+
+p.valor # p-valor < 0.05 --> Rejeita-se H0.
+
+
+```
+
+<br/>
+
+Temos evidências suficientes para rejeitar que os dados seguem uma $Poisson(\hat{\lambda})$.
+
+<br/>
+
+## Exercício 4.14 (Sprent & Smeeton) - Exercício da Roleta (p. 124)
+
+<br/>
+
+Vamos fazer um teste qui-quadrado. As hipóteses de interesse são:
+
+$$H_0: X \sim Uniforme(1,4)$$
+$$H_1: X \text{ não segue uma } Uniforme(1,4)$$
+<br/>
+
+```{r}
+
+a = 1 # parametro unif discreta
+b = 4 # parametro unif discreta
+
+n = b - a + 1
+
+x.ind = seq(1:4) # 4 quadrantes
+x = c(2,3,3,2)
+
+p = rep(1/n,4)
+
+Esp = sum(x)*p # valores < 5
+
+# agrupar quadrantes 1&2 e 3&4
+
+x_novo<-c(sum(x[1:2]), sum(x[3:4]))
+Esp_novo = c(sum(Esp[1:2]), sum(Esp[3:4]))
+
+x_2 = sum((Esp_novo-x_novo)**2/Esp_novo)
+gl = length(x_novo) - 1 # (m_novo - 1) 
+p.valor = 1 - pchisq(x_2,gl)
+
+p.valor # p-valor >> 0.05 --> Não rejeita H0.
+
+```
+
+<br/>
+
+Como p-valor = 1 >> 0.5, não rejeitamos a hipótese nula, ou seja: não temos evidências suficientes para acreditar que os dados não seguem uma Uniforme(1,4), Em outras palavras: todos os tipos de questões são igualmente prováveis de saírem no resultado da roleta.
+
+<br/>
+
+## Aula 05-04-2014
+
+Gerar 1000 amostras de tamanhos n = 20, 100, 1000. Repetir para diferentes valores de $\mu$. Ainda, para cada amostra, realizar teste de normalidade (ks.test), considerando uma Normal Padrão, e verificar a proporção de rejeições para cada caso.
+
+<br/>
+
+```{r}
+
+# Define mi (medias das Normais)
+mi<-seq(-1,1, by = 0.1)
+mi
+
+# Define numero de amostras para cada tamanho de n (e para cada mi)
+N<-1000
+
+
+calculaProporcoes<- function(amostra,n,mi){ # n = nrow(amostra)
+
+p.valores<-numeric()
+  
+for ( i in 1: 1000){
+    
+    p.valores[i]<- ks.test(amostra[,i],pnorm)$p.value
+    
+}
+
+  
+return(sum(p.valores < 0.05) / length(p.valores))
+# proporcao de rejeicoes
+
+
+}
+
+
+# Amostra de tamanho 20 e valores de mi de -1 a 1 ------------------------------
+
+prop20<-numeric()
+
+for (i in 1:length(mi)){
+  
+  set.seed(666)
+  
+  norm20 = matrix(data = NA, nrow = 1000, ncol= 20)
+  norm20 = apply(norm20, 1, function(x) rnorm(20, mi[i],1))   
+  
+  prop20[i]<- calculaProporcoes(norm20,nrow(norm20),mi[i])
+  
+  cat("n = ",nrow(norm20),", mi = ", mi[i], ", prop = ",
+      prop20[i], "\n" )
+
+}
+
+
+# Amostra de tamanho 100 e valores de mi de -1 a 1 -----------------------------
+
+
+prop100<-numeric()
+
+for (i in 1:length(mi)){
+  
+  set.seed(666)
+  
+  
+  norm100 = matrix(data = NA, nrow = 1000, ncol= 100)
+  norm100 = apply(norm100, 1, function(x) rnorm(100, mi[i],1))   
+  
+  prop100[i]<- calculaProporcoes(norm100,nrow(norm100),mi[i])
+  
+  cat("n = ",nrow(norm100),", mi = ", mi[i], ", prop = ",
+      prop100[i], "\n" )
+  
+}
+
+
+
+# Amostra de tamanho 1000 e valores de mi de -1 a 1 ----------------------------
+
+
+prop1000<-numeric()
+
+for (i in 1:length(mi)){
+  
+  set.seed(666)
+  
+  norm1000 = matrix(data = NA, nrow = 10000, ncol= 1000)
+  norm1000 = apply(norm1000, 1, function(x) rnorm(1000, mi[i],1))   
+  
+  prop1000[i]<- calculaProporcoes(norm1000,nrow(norm1000),mi[i])
+  
+  cat("n = ",nrow(norm1000),", mi = ", mi[i], ", prop = ",
+      prop1000[i], "\n" )
+  
+}
+
+# Grafico ----------------------------------------------------------------------
+
+plot(y = prop20, x = mi, type = 'l', lwd = 2, col = "red",
+     main = "Gráfico Função Poder",
+     ylab = "Proporção de Rejeição", xlab = "Valor de mi")
+lines(y = prop1000, x = mi, lwd = 2, col = "green3")
+lines(y = prop100, x = mi, lwd = 2, col = "blue")
+legend("bottomright", legend = c("n = 20","n = 100", "n = 1000"),
+       col = c("red", "blue", "green3"), title = "Tam Amostral", lwd = 2)
+
+
+
+
+```
+
+<br/>
+
+Verificamos que a proporção de rejeições diminui conforme a média das amostras se aproxima de  $\mu$ = 0 (hipótese nula do teste). Além disso, é possível notar que o poder do teste é diretamente proporcional ao tamanho amostral, rejeitando mais para valores de $\mu$ diferentes (mas próximos) de 0 quando n = 1000. 
+
+<br/>
+
+## Aula 17-04-2024
+
+Gerar 1000 amostras de uma normal e 1000 amostras de uma outra distribuição. Para cada amostra (de cada distribuição), aplicar um teste de normalidade. Verificar se as proporções de rejeição/não-rejeição se aproximam do alpha considerado no teste (alpha = 0.05).
+
+<br/>
+
+```{r}
+
+# NORMAL (0,1)
+
+set.seed(123)
+norm = matrix(data = NA, nrow = 1000, ncol= 100)
+norm = apply(norm, 1, function(x) x = rnorm(100)) #  cada coluna, 
+# uma amostra n = 100
+
+p.valores<- numeric()
+
+for ( i in 1: ncol(norm)){
+  
+  p.valores[i]<- ks.test(norm[,i],pnorm)$p.value
+  
+}
+
+# Proporcao de rejeicao (proximo de alpha = 0.05, conforme esperado)
+sum(p.valores < 0.05) / length(p.valores)
+
+# ------------------------------------------------------------------------------
+
+# DISTRIBUICAO ASSIMETRICA BIMODAL
+
+# x1=0.6*rnorm(50,0,1)
+# x2=0.4*rnorm(50,4,1)
+# x=c(x1,x2)
+# hist(x)
+
+set.seed(123)
+bim = matrix(data = NA, nrow = 1000, ncol= 100)
+bim = apply(bim, 1, function(x){ x=c(0.6*rnorm(50,0,1),0.4*rnorm(50,4,1))}) 
+  
+p.valores_<- numeric()
+
+for ( i in 1: ncol(bim)){
+  
+  p.valores_[i]<- ks.test(bim[,i],pnorm)$p.value
+  
+}
+
+# Proporcao de nao-rejeicao (proximo de alpha = 0.05, conforme esperado)
+sum(p.valores_ > 0.05) / length(p.valores_)
+
+
+```
+
+
