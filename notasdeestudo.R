@@ -1,3 +1,20 @@
+# PIT --------------------------------------------------------------------------
+
+# Ex: gerar dados de uma normal padrão pelo PIT.
+
+# Defina o número de amostras desejado
+n_amostras <- 1000
+
+# Passo 1: Gerar amostras de uma distribuição uniforme entre 0 e 1
+amostras_uniformes <- runif(n_amostras)
+
+# Passo 2: Aplicar a função de distribuição acumulada inversa da distribuição normal
+amostras_normais <- qnorm(amostras_uniformes, mean = 0, sd = 1)
+
+# Exibir as primeiras 10 amostras geradas
+print(amostras_normais[1:10])
+
+
 # 2.3 Testes de Hipotese Bondade de Ajuste -------------------------------------
 
 # testar se uma amostra vem de uma determinada distribuicao
