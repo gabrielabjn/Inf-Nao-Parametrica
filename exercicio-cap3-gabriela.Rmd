@@ -1,0 +1,511 @@
+---
+title: "Atividades Cap. 3 - INP"
+author: "Gabriela Paschoal"
+date: "2024-05-15"
+output: pdf_document
+---
+
+#### Conover, p. 164 (cap. 3)
+
+<br/>
+
+##### Exercício 01 (Conover) - A dieta feita pelos alunos é um meio efetivo de perder peso?
+
+<br/>
+
+Vamos considerar que a variável Peso só assume valores inteiros. Definimos Peso Antes como X e Peso Depois como Y. Então teremos D = X - Y. Queremos testar ao nível $\alpha = 5\%$ de significância. 
+
+<br/>
+
+$$H_0: P(+) \leq P(-) $$
+
+$$H_1: P(+) > P(-)$$
+
+<br/>
+
+Alternativamente, podemos escrever:
+
+<br/>
+
+$$H_0: T ~ Binomial (n,0.5) $$
+
+$$H_1: \text{T segue outra distribuição (ou binomial com outros parâmetros)}$$
+
+<br/>
+
+
+```{r}
+
+# Dados -----------------------------------------------------------------------
+
+dados <- matrix(c(174,191,188,182,201,188,165,186,183,178,203,181), 
+                nrow = 2, ncol = 6, byrow = T)
+rownames(dados) <- c('antes', 'depois')
+colnames(dados) <- c('A', 'E', 'J', 'M', 'P', 'R')
+
+d<-dados[1,] - dados[2,] # diferenca antes - depois
+all(d!=0) # nao tem valores nulos (nos)
+n<-length(d) # numero de individuos
+
+pos<-sum(d>0) # diferencas positivas
+
+binom.test(pos,n,alternative = 'greater')
+
+```
+
+<br/>
+
+Pelo teste do sinal, não rejeitamos $H_0$. Ou seja, não temos evidências o suficiente para acreditar que a dieta fez efeito.
+
+
+<br/>
+
+Agora, se considerarmos a variável peso como contínua (como de fato ela o é), podemos fazer um teste de Postos Wilcoxon para avaliar se houve diferença na magnitude das observações. Caso de amostras pareadas.Queremos testar as nível $5\%$ de significância se:
+
+<br/>
+
+$$H_0: E[depois] - E[antes] \geq 0$$
+
+$$H_1: E[depois] - E[antes] < 0 $$
+
+```{r}
+
+# Dados devem ser simetricos ---------------------------------------------------
+library(lawstat)
+# H0: A distribuicao eh simetrica;
+# H1: A distribuicao eh assimetrica.
+# alpha = 0.5
+symmetry.test(dados) # p - valor > 0.05 -> nao rejeita hipotese nula de simetria
+
+# Teste de Postos com Sinais de Wilcoxon ---------------------------------------
+# H0: E(DEPOIS) - E(ANTES) = 0
+# H1: E(DEPOIS) - E(ANTES) < 0
+
+# alpha = 0.05
+library(stats) 
+wilcox.test(x = dados[2,], y = dados[1,], paired = TRUE, alternative = c('less'))
+
+# p-valor (aproximado) < 0.05 (rejeitamos a hipotese nula)]
+# valor critico na dist eh 3. Como V = 1 < 3, rejeitamos H0.
+# evidencias sugerem que a dieta fez efeito.
+
+```
+
+<br/>
+
+Agora, como V = 1 < 13 (valor crítico na cauda esquerda da distribuição), temos evidências suficientes para rejeitar $H_0$ e ficar com a hipótese de que a dieta é efetiva na perda de peso.
+
+<br/>
+
+#### Exercício 02 (Conover) - O tempo de reação antes do almoço é menor que o tempo de reação depois do almoço?
+
+<br/>
+
+Vamos fazer um teste do Sinal de cauda inferior para verificar se existe diferenca entre as reações. Caso de amostras pareadas. Vamos definir X como o tempo de reação antes do almoço e Y como tempo de reação após o almoço. Teremos que D = X -Y. 
+
+<br/>
+
+Queremos testar ao nível $\alpha = 5\%$ de significância.
+
+<br/>
+
+$$H_0: P(+) \geq P(-) $$
+
+$$H_1: P(+) < P(-)$$
+
+<br/>
+
+```{r}
+
+T_<-28-(22+2)
+n<-28 - 2 # tira os nos
+
+binom.test(22,n,p=0.5,alternative='greater')
+
+# p-valor < 0.05 -> rejeita hipotese nula
+
+```
+
+<br/>
+
+Temos evidencias para acreditar que o tempo de reação apos almoco eh maior do tempo de reacao antes do almoco. 
+
+
+<br/>
+
+#### Exercício 03 (Conover) - Tipos de Concreto (qual é mais durável?)
+
+<br/>
+
+Vamos realizar um teste do sinal simples (é um caso de amostras pareadas). A estatística será dada por T = 77 (atribui-se + ao concreto A). Assim, podemos definir as hipóteses de interesse.
+
+<br/>
+
+Queremos testar ao nível $\alpha = 5\%$ de significância.
+
+<br/>
+
+$$H_0: T \sim Binomial (100,0.5)$$
+
+$$H_1:\text{T segue outra distribuição (ou binom com outros parâmetros)}$$
+
+<br/>
+
+
+```{r}
+
+# atribuir +'s ao concreto A
+binom.test(77, 100, p = 0.5, conf.level = 0.95)
+
+# p-valor < 0.05 (rejeitamos H0)
+
+
+```
+
+<br/>
+
+As evidencias sugerem que existe diferenca entre os concretos, com o A sendo mais eficiente.
+
+<br/>
+
+#### Exercício 04 (Conover) - Preferencia por Queijos
+
+<br/>
+
+7 preferiram o tipo A, 12 preferiram o tipo B e 3 nao tiveram preferencia. 
+
+<br/>
+
+Vamos realizar um teste do Sinal simples para testar se existe diferença significativa na preferência por queijos. Define-se a preferência pelo tipo A como positivos e a preferência pelo tipo B como negativos. Remove-se os "nós", isto é, os valores nulos, e ficamos com n = 19.
+
+<br/>
+
+Queremos testar ao nível $\alpha = 5\%$ de significância. 
+
+<br/>
+
+$$ P(+) = P(-) $$
+
+$$ P(+) != P(-)$$
+
+<br/>
+
+```{r}
+
+binom.test(x = 7,n = 19)
+
+# p-valor > 0.05 -> nao rejeita a hipotese nula
+
+
+```
+
+<br/>
+
+Não rejeitamos a hipótese nula de que não existe diferença significativa (a 5%) na preferência por queijos.
+
+<br/>
+
+#### Exercício 05 (Conover) - Nascimentos de Bebes
+
+<br/>
+
+Também podemos fazer um teste do sinal. Define-se X = quantidade de nascimentos durante o dia (+) e Y = quantidade de nascimentos durante a noite (-). A hipótese é a de que Y é maior, logo P(-) é maior.
+
+<br/>
+
+$$ P(+) \geq P(-) $$
+
+$$ P(+) < P(-)$$
+
+<br/>
+
+```{r}
+
+noite<-c(12+15+16+17)
+dia<-c(12+9+10+11)
+
+binom.test(x = sum(noite),n = sum(dia+noite), alternative = 'greater')
+
+# p-valor < 0.05 -> rejeita a hipotese nula
+
+
+
+```
+
+<br/>
+
+Temos evidências o suficiente para rejeitar $H_0$ em favor da hipótese de que a quantidade de nascimentos durante a noite é maior.
+
+<br/>
+
+#### Exercício 06 (Conover) - Os insetos são atraídos pela essência?
+
+<br/>
+
+33 insetos foram em direção à essência (+). 16 foram no sentido contrário (-). 12 ficaram no meio do caminho (nós). Vamos testar a 5% de significância:
+
+$$P(+) = P(-)$$
+
+$$P(+) != P(-)$$
+
+```{r}
+
+n = 33 + 16 
+
+binom.test(33,n)
+
+# p-valor < 0.05
+
+```
+
+<br/>
+
+Temos evidências suficientes para rejeitar que os insetos não são atraídos pela essência.
+
+<br/>
+
+#### Conover, p. 364 (cap. 5)
+
+<br/>
+
+#### Exercício 01 (Conover) - O álcool afetar o tempo de reação?
+
+<br/>
+
+Vamos definir X como o tempo de reação antes e Y como o tempo de reação depois da bebida alcóolica. Então D = X - Y. As amostras são pareadas (mesmos indivíduos). Vamos testar a $5\%$ as hipóteses:
+
+<br/>
+
+$$H_0: E(D) = 0$$
+$$H_1: E(D) \neq 0$$
+
+
+
+```{r}
+
+antes<- c(0.68, 0.64, 0.68, 0.82, 0.58, 0.80, 0.72, 0.65, 0.84, 0.73, 
+          0.65, 0.59, 0.78, 0.67, 0.65, 0.76, 0.61, 0.86, 0.74, 0.88)
+
+depois<-c(0.73, 0.62, 0.66, 0.92, 0.68, 0.87, 0.77, 0.70, 0.88, 0.79,
+          0.72, 0.60, 0.78, 0.66, 0.68, 0.77, 0.72, 0.86, 0.72, 0.97)
+
+n = 20
+
+# TESTE SIMETRIA
+
+symmetry.test(antes-depois) #p-valor > 0.05 (nao rejeitamos que
+#a dist eh simetrica)
+
+
+wilcox.test(x = antes, y = depois, paired = TRUE)
+
+# 53 valor critico a esquerda
+
+(n*(n+1)/2) - 53 # 157 valor critico a direita
+
+
+```
+
+<br/>
+
+A estatística do teste foi V = 17, que está fora da região de não-rejeição. Logo, rejeitamos $H_0$ (temos evidências para acreditar que o álcool afeta o tempo de reação).
+
+<br/>
+
+#### Exercício 02 (Conover) - Número mediano de itens comprados no hortifruti.
+
+<br/>
+
+O teste de Wilcoxon não se aplica porque não é uma situação do tipo 'antes' e 'depois', e o que estamos usando se aplica a casos de amostras pareadas.
+
+<br/>
+
+#### Exercício 04 (Conover) - Performance de jogaras cai com o cansaço?
+
+<br/>
+
+Vamos fazer um teste de postos Wilcoxon para avaliar se houve uma diferença significativa nas pontuações antes e após esforço físico. Definimos como X os dados de antes e como Y os dados de depois. Então D = X - Y. Nossas hipóteses de interesse serão:
+
+<br/>
+
+$$H_0: E[D] = 0$$
+$$H_1: E[D] \neq 0$$
+<br/>
+
+O $\alpha$ a ser utilizado é de $5\%$
+
+```{r}
+
+antes<-c(18, 12, 7, 21, 19, 14, 8, 11, 19, 16, 8, 11)
+depois<-c(16, 10, 8, 23, 13, 10, 8, 13, 9, 8, 8, 5)
+
+d = antes - depois
+
+n = length(d)
+
+# teste simetria ---------------------------------------------------------
+
+symmetry.test(d) # p - valor > 0.57 -> não rejeita hipótese de simetria
+
+
+# teste wilcoxon ---------------------------------------------------------
+
+wilcox.test(x = antes, y = depois, paired = TRUE)
+# p-valor muito proximo de 5% -> não rejeitamos H0
+
+# wilcox.test(d) # faz o mesmo da linha de cod anterior
+
+```
+
+<br/>
+
+Não temos evidências suficientes para rejeitar que a pontuação não se altera após treinamento intensivo. 
+
+<br/>
+
+#### Sprent & Smeeton, p. 145 (cap. 5)
+
+<br/>
+
+##### Exercício 1 (S&S) - Verificar se determinada droga causa diferença significativa na pressão arterial.
+
+<br/>
+
+As amostras são pareadas. Vamos fazer um teste de postos de Wilcoxon. Consideramos os valores dados como D = X - Y, sendo X as mensurações da pressão arterial antes e Y as mensurações após os pacientes ingerirem a droga. Vamos testar, ao nível $\alpha = 5\%$ de significância, as hipóteses:
+
+<br/>
+
+$$H_0: E[D] = 0$$
+
+<br/> 
+
+$$H_1: E[D] \neq 0$$
+
+<br/>
+
+```{r}
+
+dados<-c(7,5,12,-3,-5,2,14,18,19,21,-1)
+
+# teste simetria 
+symmetry.test(dados) # p-valor > 0.05 -> nao rejeita H0 (normalidade)
+
+# teste wilcoxon
+
+wilcox.test(x = dados) # p -valor < 0.05 -> rejeita H0
+
+#(11*(11+1)/2)-14
+
+# 14 e 52
+
+```
+
+<br/>
+
+Como v= 57.5 é maior que o valor crítico superior associado à distribuição do teste de Wilcoxon para uma amostra de tamanho 11 e $\alpha=5\%$, rejeitamos H0 em favor de H1 (a droga causa diferença na pressão arterial).
+
+<br/>
+
+##### Exercício 2 (S&S) - Diferenças entre análises feitas por dois laboratórios em cremes de lácteos.
+
+<br/>
+
+As diferenças serão dadas por D = X - Y, onde X são as contagens de bactérias feitas pelo Lab 1 e Y, as contagens feitas pelo Lab 2. Vamos testar ao nível $5\%$ de significância:
+
+<br/>
+
+
+$$H_0: E[D] = 0 \text{ (Não existe diferença nas contagens entre os Labs)  }$$
+
+<br/> 
+
+$$H_1: E[D] \neq 0 \text{ (Existe diferença nas contagens entre os Labs)  }$$
+
+<br/>
+
+```{r}
+
+labI<-c(11.7, 12.1, 13.3, 15.1, 15.9, 15.3, 11.9, 16.2, 15.1, 13.6)
+labII<-c(10.9, 11.9, 13.4, 15.4, 14.8, 14.8, 12.3, 15.0, 14.2, 13.1)
+
+d<-labI-labII
+n<-length(d)
+
+# teste simetria
+symmetry.test(d) # p-valor > 0.05 -> nao rejeita hipotese de normalidade
+
+# teste wilcoxon
+
+wilcox.test(d) # p = 0.05
+wilcox.test(d, conf.level = 0.99)
+
+# 9 limite critico inferior
+
+#(n*(n+1)/2)-9  # 64 limite superior
+
+
+
+```
+<br/>
+
+Como V = 47 está fora do intervalo [9,46], rejeitamos a hipótese de que não existe diferença nas contagens feitas pelos laboratórios 1 e 2. Agora, se fosse considerado um nível de significância de $1\%$, teríamos que o intervalo de não rejeição seria dado por [4,51], no qual V estaria incluído, e logo, não rejeitaríamos H0 (o que sugeriria que as contagens são iguais). Se fosse levado em consideração o valor p, não rejeitaríamos H0 para nenhum dos níveis de significância considerados.
+
+<br/>
+
+##### Exercício 4 (S&S)- Quem compreende melhor os problemas dos filhos: as mães ou os pais?
+
+<br/>
+
+Vamos realizar um teste do sinal simples. Atribuíremos às mães o sinal positivo (+) e aos pais o sinal negativo (-). Queremos testar ao nível $\alpha = 5\%$:
+
+<br/>
+
+$$H_0: E[+] = E[-]$$
+$$H_1: E[+] < E[-] $$
+
+```{r}
+
+n<-17
+maes<-4
+pais<-n-maes
+
+binom.test(maes, n, alternative = 'less')
+
+```
+<br/>
+
+Como p-valor foi menor que o nível de significância adotado ($5\%$), rejeitamos a hipótese nula. Temos evidências para acreditar que os pais demonstram melhor entendimento dos problemas potenciais dos filhos.
+
+<br/>
+
+##### Exercício 6 (S&S) - Mudança de Atitude em Relação ao Consumo de Álcool após Dinâmicas Educativas. 
+
+<br/>
+
+Vamos fazer um teste Mcnemar para avaliar se houve diferença de atitude dos participantes. Adotaremos $\alpha=5\%$ e consideraremos as hipóteses:
+
+<br/>
+
+$$H_0: P(+) = P(-)$$
+$$H_1: P(+) \neq P(-)$$
+
+<br/>
+
+```{r}
+
+data<-matrix(c(41, 16, 27, 58), nrow = 2,
+    dimnames = list("After Video" = c("Support", "Do Not Support"),
+                    "Before Video" = c("Support", "Do Not Support")))
+
+data
+
+mcnemar.test(data)
+qchisq(0.95, df = 1)
+
+```
+
+<br/>
+
+Como a estatística do teste 2.3256 é menor que 3.841 (valor crítico qui-quadrado quando $\alpha=5\%$), não rejeitamos $H_0$, ou seja, não temos evidências o suficiente para dizer que houve mudança significativa no comportamento dos participantes.
+
+<br/>
