@@ -1,0 +1,1122 @@
+---
+title: "Atividade Cap. 4 - INP"
+author: "Gabriela Paschoal"
+date: "2024-06-01"
+output: pdf_document
+---
+
+### Conover, cap. 6 - p. 465-466 (1,2,5,6)
+
+<br/>
+
+### [1] 
+
+<br/>
+
+Vamos definir as hipóteses como a seguir e fixar $\alpha = 5\%$.
+
+<br/>
+
+$$H_0: F(x) \leq G(x) \text{   } \forall x \in  R$$
+$$H1: F(x) > G(x) \text{  para algum x.}$$
+<br/>
+
+
+```{r}
+
+# F(x) <= G(x)
+
+# Observacoes de F(x): 0.6, 0.8, 0.8, 1.2, 1.4
+#                G(x): 1.3,1.3,1.8,2.4,2.9
+
+f_generated<- c(0.6, 0.8, 0.8, 1.2, 1.4)
+length(f_generated)
+
+g_generated<-c(1.3,1.3,1.8,2.4,2.9)
+length(g_generated)
+  
+ks.test(f_generated, g_generated,alternative = 'less' )
+
+4/5 # critical value
+
+```
+
+<br/>
+
+Como D = 0 < 0.8, nao rejeitamos a hipótese nula. Não temos evidências para rejeitar que F(x) <= G(x).
+
+<br/>
+
+### [2]
+
+<br/>
+
+Seja Fx a distribuição dos meninos da amostra de n = 5 e Fy a distribuição da amostra de n = 8. As hipóteses do teste são definidas como a seguir e o $\alpha$ considerado será de $5\%$.
+
+<br/>
+
+$$ H_0: Fx(z) = Fy(z) \text{   } \forall z \in  R $$
+$$ H_1: Fx(z) \neq Fy(z) \text{   } \text{para algum z  em R.} $$
+
+<br/>
+
+```{r}
+
+x<-c(82,74,87,86,75)
+y<-c(88,77,91,88,94,93,83,94)
+length(x)
+length(y)
+
+ks.test(x,y)
+
+```
+
+<br/>
+
+Como D = 0.75 > 0.675, rejeitamos $H_0$ em favor de $H_1$. Ou seja, as evidências sugerem que as populações de meninos da sexta série são diferentes.
+
+<br/>
+
+### [5]
+
+<br/>
+
+Vamos testar ao nível $5\%$ de significância:
+
+<br/>
+
+$$ H_0: Fx(z) = Fy(z) \text{   } \forall z \in  R $$
+$$ H_1: Fx(z) \neq Fy(z) \text{   } \text{para algum z  em R.} $$
+<br/>
+
+onde Fx é a distribuição das economias dos integrantes do programa A e Fy é a distribuição das economias dos integrantes do programa B.
+
+<br/>
+
+```{r}
+
+a<-c(143, 106, 108, 138,101,83,82,12,58,42)
+b<-c(182, 158,161,131,175,142,111,96,90,144)
+
+par(mfrow = c(1,2))
+hist(a, col = 'lightpink')
+hist(b, col = 'lightpink')
+
+library(lawstat)
+symmetry.test(a)
+symmetry.test(b)
+sd(a)
+sd(b)
+
+length(a)
+length(b)
+
+ks.test(a,b)
+
+library(cramer)
+cramer.test(a,b)
+
+```
+<br/>
+
+Pelo KS Test, D = 0.6, que é igual ao valor crítico na distribuição da estatística do teste a 5%, logo não rejeitamos $H_0$. Ou seja, não temos evidências para afirmar que um programa surtiu efeito diferente do outro nas economias. Porém, pelo teste Cramer, a estatística observada foi 97.35 > 64.2, sugerindo a rejeição de $H_0$ (os programas tiveram efeitos diferentes nas economias dos participantes). A diferença de resultados pode ter se dado devido ao fato de que o teste KS é sensível à características como a dispersão dos dados.
+
+<br/>
+
+### [6]
+
+<br/>
+
+Seja F a distribuição do tamanho dos tumores do grupo tratamento e G a distribuição do grupo controle. Queremos testar a $5\%$ de significância:
+
+$$H_0: F(x) \leq G(x) \text{   } \forall x \in  R$$
+$$H1: F(x) > G(x) \text{  para algum x.}$$
+
+
+<br/>
+
+```{r}
+
+tratamento<-c(0.8,0,0.6,1.1,1.2,0.5)
+controle<-c(6,1.6,1.7,1.3,2.2,1.5,0.7,0.7,1.6)
+
+length(tratamento)
+length(controle)
+
+par(mfrow=c(1,2))
+hist(tratamento, col = 'lightpink')
+hist(controle, col = 'lightpink')
+
+ks.test(tratamento, controle, alternative = 'less')
+
+```
+<br/>
+
+Como D= 0 < 0.56 (valor crítico a $5\%$), não rejeitamos a hipótese de que o tamanho dos tumores do grupo tratamento é menor ou, no máximo, igual ao tamanho dos tumores do grupo controle.
+
+<br/>
+
+### Sprent & Smeeton, cap. 6 - p. 194 (6.15)
+
+<br/>
+
+### [6.15]
+
+<br/>
+
+Vamos definir as hipóteses como a seguir (e testá-las a $5\%$):
+
+$$H_0: \text{O tempo de resposta do grupo sem dificuldades é menor ou igual ao tempo de resposta do grupo com dificuldades.}$$
+$$H_1: \text{O tempo de resposta do grupo sem dificuldades é maior que o do grupo com dificuldades}$$
+
+<br/>
+```{r}
+
+sem_dific<-c(204, 218, 197, 183, 227, 233, 191)
+com_dific<- c(243, 228, 261, 202, 343, 242, 220 ,239)
+
+length(sem_dific)
+length(com_dific)
+
+par(mfrow=c(1,2))
+hist(sem_dific, col = 'lightpink')
+hist(com_dific, col = 'lightpink')
+
+sd(sem_dific)
+sd(com_dific)
+
+symmetry.test(sem_dific) # nao rejeita simetria
+symmetry.test(com_dific) # nao rejeita simetria
+
+ks.test(sem_dific, com_dific, alternative = 'less')
+
+
+```
+
+<br/>
+
+Como 5.55e-17 << 0.59 (valor crítico a $5\%$), não rejeitamos $H_0$ (o tempo de resposta do grupo sem dificuldades é menor ou igual ao do grupo com dificuldades).
+
+<br/>
+
+### Conover, cap. 4 - p. 226 (ex. 2)
+
+<br/>
+
+### [2]
+
+<br/>
+
+Vamos testar as hipóteses abaixo a $5\%$ de significância.
+
+<br/>
+
+$$H_0: \text{Medium number of bids on each lease is identical}$$
+$$H_1: \text{Medium number of bids on each lease is different}$$
+
+
+<br/>
+
+```{r, fig.align='center'}
+
+producers<-c(6,3,1,14,8,9,12,1,3,2,1,7)
+nonproducers<-c(6,2,1,1,3,1,2,4,8,1,2)
+
+par(mfrow= c(1,2))
+hist(producers, col='lightpink')
+hist(nonproducers, col = 'lightpink')
+
+median.test2sample <- function(X,Y){
+AmComb=c(X,Y)
+medAC=median(AmComb)
+A=sum(X>medAC)
+B=sum(Y>medAC)
+m=length(X)
+n=length(Y)
+C=m-A
+D=n-B
+tabMed=matrix(c(A,C,B,D),2,2)
+tabMed
+stab=sum(tabMed)
+if (stab< 20) test= fisher.test(tabMed)
+else test=chisq.test(tabMed)
+return(test) 
+}
+
+median.test2sample(producers,nonproducers)
+
+qchisq(0.95,1)
+
+```
+
+<br/>
+
+0.47 < 3.84, logo não rejeitamos $H_0$ (não temos evidências para acreditar que o número de *bids* é diferente).
+
+<br/>
+
+### Conover, cap. 5 - p. 286-287 (ex. 1, 2, 5, 6)
+
+<br/>
+
+### [1]
+
+<br/>
+
+Testar se a temperatura alta média em Des Moines é maior que a temperatura alta média em Spokane para as a.a.s fornecidas. Vamos supor que as distribuições das populações de temperaturas diferem apenas na locação. Seja X a população de temperaturas de Des Moines e Y a de Spokane. Vamos testar a 5% de significância:
+
+<br/>
+
+$$H_0: E[X] = E[Y] $$
+$$H_1: E[X] > E[Y]$$
+
+<br/>
+
+```{r, fig.align='center'}
+dm<-c(83,91,94,89,89,96,91,92,90)
+s<-c(78,82,81,77,79,81,80)
+
+length(dm)
+length(s)
+
+par(mfrow = c(1,2))
+hist(dm, col = 'lightpink', freq = FALSE)
+hist(s, col = 'lightpink', freq = FALSE)
+
+wilcox.test(x = dm, y = s, alternative='greater')
+
+w_sup = 9*(16+1)-61 # calculo do quantil superior que acumula 5%
+w_sup
+
+```
+
+<br/>
+
+W = 63 < 92 (quantil associado a 5% de significância), logo não rejeitamos $H_0$. As evidências sugerem que a média das temperaturas de Des Moines não é maior que a de Spokane.
+
+<br/>
+
+### [2]
+
+<br/>
+
+A temperatura média considerada confortável por homens (H) e mulheres (M) é a mesma? Vamos testar, a 5% de significância, as hipóteses:
+
+<br/>
+
+$$H_0: E[H] = E[M] $$
+$$H_1: E[H] \neq E[M]$$
+
+<br/>
+
+Estamos supondo que as distribuições das populações de temperaturas diferem apenas na locação.
+
+<br/>
+
+```{r, fig.align='center'}
+
+h = c(74,72,77,76,76,73,75,73,74,75)
+m = c(75,77,78,79,77,73,78,79,78,80)
+
+par(mfrow = c(1,2))
+hist(h, col = 'lightpink', freq = FALSE)
+hist(m, col = 'lightpink', freq = FALSE)
+
+wilcox.test(x = h, y = m)
+
+w_sup = 10*(20+1)-79 # calculo do quantil superior que acumula 0.025%
+w_sup
+
+```
+<br/>
+
+W = 13 $\notin$ [79,131], então rejeitamos a hipótese de que as médias de temperatura consideradas confortáveis são iguais para homens e mulheres.
+
+<br/>
+
+
+### [5] Telescópios melhoram a habilidade de atingir um alvo de madrugada? 
+
+<br/>
+
+Vamos testar a 5% de significância se a média do grupo A (scores de pessoas usando rifles com visão telescópica) é maior que a do grupo B (scores de pessoas usando rifles sem visão telescópica). Os scores vão de 0 a 100, onde 100 é um tiro perfeito. Supomos as distribuições populacionais pertencentes a uma família locação;
+
+<br/>
+
+$$H_0: E[A] = E[B] $$
+
+<br/>
+
+$$H_1: E[A] > E[B]$$
+<br/>
+
+```{r}
+
+grupoA = c(96,93,88,85)
+grupoB = c(89,83,80,77)
+
+par(mfrow = c(1,2))
+hist(grupoA, col = 'lightpink', freq = FALSE)
+hist(grupoB, col = 'lightpink', freq = FALSE)
+
+w_test = wilcox.test(x=grupoA, y = grupoB, alternative = 'greater')
+w_test
+
+w_sup = 4*(8+1)-12 # 12 eh o quantil inf a 5% (hipotetico pois o teste eh unilateral)
+w_sup
+
+```
+
+<br/>
+
+Como W = 14 < 24 (quantil que acumula 5% à direita da distribuição), não rejeitamos $H_0$. Em outras palavras, as evidências indicam que o uso do telescópio acoplado ao rifle não melhora a performance dos participates;
+
+<br/>
+
+### [6] Diferentes camuflagens são significativamente diferentes de detectar? 
+
+<br/>
+
+Vamos considerar $\alpha = 5%$ e populações pertencentes à mesma família locação; Queremos testar:
+
+<br/>
+
+$$H_0: E[Plain] = E[Patterned] $$
+
+<br/>
+
+$$H_1: E[Plain] \neq E[Patterned]$$
+
+<br/>
+
+```{r}
+
+plain = c(25,28,16,34,38,21,29,43,32,36)
+patterned = c(26,12,16,21,20,14,10,18,22,20)
+
+par(mfrow = c(1,2))
+hist(plain, col = 'lightpink', freq = FALSE)
+hist(patterned, col = 'lightpink', freq = FALSE)
+
+length(plain) == length(patterned)
+length(plain)
+
+wilcox.test(x = patterned, y = plain)
+
+w_sup = 10*(20+1)-79 # calculo do quantil superior que acumula 0.025%
+w_sup
+
+
+
+
+```
+<br/>
+
+Como W = 10 $\notin$ [79,131], rejeitamos $H_0$ e concluímos que existe diferença de eficácia das camuflagens.
+
+<br/>
+
+### Sprent & Smeeton, cap. 6 - p. 196-197 (2,4,5,8,10,11,12)
+
+<br/>
+
+### [2] A dureza de uma liga é influenciada pela temperatura? 
+
+<br/>
+
+Seja $\theta_l$ a mediana de L (rankings de dureza da liga para a temperatura L) e $\theta_h$ a mediana de H (rankings de dureza da liga para a temperatura H). Testaremos, a $5\%$ de significância, as hipóteses:
+
+<br/>
+
+$$H_0: \theta_l = \theta_h$$
+
+<br/>
+
+$$H_1: \theta_l \neq \theta_h$$
+<br/>
+
+```{r, fig.align='center'}
+
+library(RVAideMemoire)
+library(lawstat)
+
+ind<-seq(1,16)
+sequence <- "H L H H H L H L L H H L L L L L"
+
+# Split the sequence by space
+temp <- strsplit(sequence, " ")[[1]]
+
+# Encontrar as posições onde "H" ocorre no primeiro vetor
+posicoes_H <- which(temp == "H")
+posicoes_L <- which(temp == "L")
+
+# Pegar os elementos correspondentes do segundo vetor
+ind_H <- ind[posicoes_H]
+ind_L <- ind[posicoes_L]
+# 7 H 
+# 9 L
+
+par(mfrow=c(1,2))
+hist(ind_H, col = 'lightpink')
+hist(ind_L, col = 'lightpink')
+
+symmetry.test(ind_H) # dist simetrica
+symmetry.test(ind_L) # dist simetrica
+
+fp.test(ind_H, ind_L)
+
+# 2.287 quantil que acumula 0.025
+
+```
+
+<br/>
+
+Como o p-valor obtido é menor que o nível de significância adotado, rejeitamos $H_0$ em favor de $H_1$ (a dureza da liga é afetada pela temperatura).
+
+<br/>
+
+### [4] Existe diferença de taxa de perda de calor entre 2 tipos de fogões?
+
+<br/>
+
+Vamos testar a $5\%$ se as medianas dos fogões tipo X e Y são iguais.
+
+<br/>
+
+$$H_0: \theta_x = \theta_y$$
+
+<br/>
+
+$$H_1: \theta_x \neq \theta_y$$
+
+<br/>
+
+```{r, fig.align='center'}
+
+x<- "15.7 14.8 14.2 16.1 15.3 13.9 17.2 14.9"
+y<- "13.7 14.1 14.7 15.4 15.6 14.4 12.9 15.1 14.0"
+
+x <- strsplit(x, " ")[[1]]
+y <- strsplit(y, " ")[[1]]
+
+x<-as.numeric(x)
+y<- as.numeric(y)
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+
+symmetry.test(x) # simetrico
+symmetry.test(y) # simetrico
+
+fp.test(x,y)
+
+
+
+```
+
+<br/>
+
+O p-valor obtido está acima do nível de significância considerado; logo, não rejeitamos $H_0$ (os tipos de fogão têm a mesma taxa de perda de calor).
+
+<br/>
+
+Para obter um IC de 95% para a diferença mediana de perda de calor entre X e Y sem considerar normalidade, podemos utilizar um método não paramétrico, como o bootstraping.
+
+<br/>
+
+```{r}
+# Combine the data into a single vector
+combined_data <- c(x, y)
+
+# By combining the data, we're essentially treating them as coming from the
+#same population, and then we're simulating the process of randomly sampling
+#from this combined population. This allows us to obtain a distribution of the
+#difference in medians under the assumption that there is no true difference
+#between the two types of stoves.
+
+# Function to calculate the difference in medians
+median_diff <- function(data1, data2) {
+  return(median(data1) - median(data2))
+}
+
+# Bootstrapping for the difference in medians
+set.seed(123)  # For reproducibility
+boot_samples <- replicate(1000, {
+  sample_data <- sample(combined_data, replace = TRUE)
+  median_diff(sample_data[1:length(x)], sample_data[(length(x) + 1):length(combined_data)])
+})
+
+# Calculate the confidence interval
+ci <- quantile(boot_samples, c(0.025, 0.975))
+
+# Print the confidence interval
+print(ci)
+
+
+```
+<br/>
+
+Agora, vamos construir outro IC de 95% assumindo normalidade dos dados.
+
+<br/>
+
+```{r}
+
+data<-combined_data
+
+# Function to calculate the standard error of the median
+median_se <- function(data) {
+  n <- length(data)
+  return(IQR(data) / (sqrt(4 * n)))
+}
+
+# Function to calculate the confidence interval assuming normality
+normal_ci <- function(data1, data2, alpha = 0.05) {
+  diff_med <- median(data1) - median(data2)
+  se_diff <- sqrt(median_se(data1)^2 + median_se(data2)^2)
+  z <- qnorm(1 - alpha / 2)
+  ci <- c(diff_med - z * se_diff, diff_med + z * se_diff)
+  return(ci)
+}
+
+# Calculate the confidence interval
+ci_normal <- normal_ci(x, y)
+
+# Print the confidence interval
+print(ci_normal)
+
+```
+
+<br/>
+
+O IC não-paramétrico inclui 0, sugerindo que não existe diferença entre as medianas dos dois tipos de fogão; já o IC paramétrico (normal) não inclui 0, sugerindo que existe sim diferença na taxa de resfriamento dos dois tipos de fogão considerados.
+
+<br/>
+
+### [5] Níveis de ansiedade relacionados à espera em hospitais são dependentes do gênero? 
+
+<br/>
+
+Vou performar um teste Wilcoxon-Mann-Whitney a 5% de significância. O tamanho da estatística adotado corresponderá à quantidade de homens (m_len).
+
+<br/>
+
+$$H_0: F_X[x] = F_Y[y] $$ (As distribuições de níveis de ansiedade de homens e mulheres não diferem na locação)
+$$H_1: F_X[x] \neq F_Y[y] $$ As distribuições de níveis de ansiedade de homens e mulheres diferem na locação)
+<br/>
+
+```{r}
+# Create a dataframe with the data
+data <- data.frame(
+  gender = c(rep("Male", 17), rep("Female", 23)),
+  anxiety_rank = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
+                   18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 
+                   33, 34, 35, 36, 37, 38, 39, 40),
+  stringsAsFactors = FALSE
+)
+
+# Calculate the sum of ranks for men
+sum_ranks_men <- 428
+
+# Perform the Mann-Whitney U test
+result <- wilcox.test(anxiety_rank ~ gender, data = data)
+
+# Print the test result
+print(result)
+
+```
+
+<br/>
+
+Como p-valor < 5%, rejeitamos a hipótese de que as distribuições de níveis de ansiedade de homens e mulheres não diferem na locação.Pelos dados, parece que os homens sofrem mais de ansiedade na fila de espera do hospital.
+
+<br/>
+
+### [8] Existe diferença entre tempos médios de espera, em meses completos, entre 1979 e 1983?
+
+<br/>
+
+Seja X a população de tempos de espera, em meses, de 1979 e Y, a população de tempos de espera de 1983. Vamos testar, ao nível 5% de significância, as hipóteses abaixo:
+
+<br/>
+
+$$H_0: E[X] = E[Y] $$
+
+$$H_1: E[X] \neq E[Y]$$
+<br/>
+
+```{r, fig.align='center'}
+
+x<-"26 28 34 48 21 22 34"
+x <- as.numeric(strsplit(x, " ")[[1]])
+
+y<-"28 27 42 44 17 6 16"
+y <- as.numeric(strsplit(y, " ")[[1]])
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+
+symmetry.test(x) # simetrico
+symmetry.test(y) # simetrico
+
+library(coin)
+
+dados <- data.frame(
+  Qtd_meses = c(x,y),
+  Freq = factor(seq(0,6), seq(0,6))
+)
+
+normal_test(Qtd_meses ~ Freq, data = dados ) # rejeita pelo normal_test
+qchisq(0.95,6)
+
+wilcox.test(x,y) # suposicao de que as variancias de x e y sao iguais
+
+```
+<br/>
+
+Como w = 30.5 < 37 (quantil que acumula 0.025 à esquerda da distribuição de W), não rejeitamos a hipótese de que a média dos tempos de espera é a mesma. Além disso, pelo teste de van der Waerden, também não rejeitamos $H_0$ a 5% (estatística qui-quadrado 10.06 < 12.59 - quantil que acumula 0.05 à direita).
+
+<br/>
+
+### [10] Existe diferença entre tempos médios de resposta a drogas ministradas em dosagens distintas?
+
+<br/>
+
+Seja X a dose 1 e Y a dose 2. Vamos testar, ao nível 5% de significância, as hipóteses abaixo:
+
+<br/>
+
+$$H_0: E[X] = E[Y] $$
+
+$$H_1: E[X] \neq E[Y]$$
+<br/>
+
+```{r, fig.align='center'}
+
+x<-"0.21 -16.20 -10.10 -8.67 -11.13 1.96 -10.19 -15.87 -12.81"
+x <- as.numeric(strsplit(x, " ")[[1]])
+
+y<-"1.59 2.66 -6.27 -2.32 -10.87 7.23 -3.76 3.02 15.01"
+y <- as.numeric(strsplit(y, " ")[[1]])
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+
+symmetry.test(x) # simetrico
+symmetry.test(y) # simetrico
+
+library(coin)
+
+dados <- data.frame(
+  Tempos = c(x,y),
+  Niveis = factor(rep(c("dose 1", "dose 2"), c(length(x), length(y))))
+)
+
+normal_test(Tempos ~ Niveis, data = dados ) # rejeita pelo normal_test
+
+wilcox.test(Tempos~Niveis, dados) # suposicao de que as variancias de x e y sao iguais
+
+
+```
+
+<br/>
+
+Pelo teste de var der Waerden e pelo teste Wilcoxon Mann Whitney, rejeitamos a hipótese de que o tempo médio de resposta de diferentes dosagens de uma droga é o mesmo (Z=-2.52 < -1.96 no primeiro teste e W = 12 < 37 no segundo teste).
+
+<br/>
+
+### [11] DMF scores diferem significativamente entre alunos homens e mulheres?
+
+<br/>
+
+Seja M a população de scores para homens (males) e F para mulheres (females). Vamos testar a 5% :
+
+$$H_0: F_M[m] = F_F[f] $$
+
+$$H_1:  F_M[m] \neq F_F[f] $$
+<br/>
+
+```{r, fig.align='center'}
+
+m<-"8 6 4 2 10 5 6 6 19 4 10 4 10 12 7 2 5 1 8 2 0 7 6 4 4 11 2 16 8 7 8 4 0 2"
+m <- as.numeric(strsplit(m, " ")[[1]])
+
+f<-"4 7 13 4 8 8 4 14 5 6 4 12 9 9 9 8 12 4 8 8 4 11 6 15 9 8 14 9 8 9 7 12 11 7 4 10 7 8 8 7 9 10 16 14 15 10 4 6 3 9 3 10 3 8"
+f <- as.numeric(strsplit(f, " ")[[1]])
+
+par(mfrow=c(1,2))
+hist(m, col = 'lightblue')
+hist(f, col = 'lightpink')
+
+symmetry.test(m) # simetrico
+symmetry.test(f) # simetrico
+
+library(coin)
+
+dados <- data.frame(
+  Scores = c(m,f),
+  Niveis = factor(rep(c("M", "F"), c(length(m), length(f))))
+)
+
+normal_test(Scores ~ Niveis, data = dados ) # rejeita pelo normal_test
+
+wilcox.test(Scores~Niveis, dados) # suposicao de que as variancias de x e y sao iguais
+
+
+```
+
+<br/>
+
+Pelo teste van der Waerden, $H_0$ é rejeitada a 5% (z=2.79>1.96), pelo teste Wilcoxon também (p-valor << 0.05). Temos evidências para acreditar que os DMF scores não são os mesmos entre homens e mulheres.
+
+<br/>
+
+### [12] Existe diferença de comprimento para uma característica fenotípica entre duas populações de inseto?
+
+<br/>
+
+Seja X a população de insetos da espécie A e Y a população de insetos da espécie B. Vamos testar a 5%:
+
+$$H_0: F_X[x] = F_Y[y] $$
+
+$$H_1:  F_X[x] \neq F_Y[y] $$
+
+<br/>
+
+```{r, fig.align='center'}
+
+x<-"131 134 137 127 128 118 134 129 131 115"
+x <- as.numeric(strsplit(x, " ")[[1]])
+
+y<-"107 122 144 131 108 118 122 127 125 124"
+y <- as.numeric(strsplit(y, " ")[[1]])
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+
+library(coin)
+
+dados <- data.frame(
+  Width = c(x,y),
+  Niveis = factor(rep(c("espécie A", "espécie B"), c(length(x), length(y))))
+)
+
+normal_test(Width ~ Niveis, data = dados ) # rejeita pelo normal_test
+
+wilcox.test(Width~Niveis, dados) # suposicao de que as variancias de x e y sao iguais
+
+
+```
+
+<br/>
+
+No teste de van der Waerden: -1.96< z = 1.51 < 1.96, logo não rejeita $H_0$. No teste Wilcoxon-Mann-Whitney: W = 72 < 79 (quantil inferior que acumula 0.025), logo rejeitamos $H_0$.
+
+<br/>
+
+### Conover, cap. 5 - p. 310-311 (1,2)
+
+<br/>
+
+### [1] A variância dos batimentos cardíacos de homens é significativamente maior que a de mulheres?
+
+<br/>
+
+Seja H os batimentos cardíacos dos homens e M, os batimentos das mulheres. Vamos testar as hipóteses abaixo a 5% de significância.
+
+<br/>
+
+$$H_0: \sigma_h^2 = \sigma_m^2$$
+
+<br/>
+
+$$H_1: \sigma_h^2 > \sigma_m^2$$
+
+<br/>
+
+```{r, fig.align='center'}
+
+h<-c(58,76,82,74,79,65,74,86)
+m<-c(66,74,69,76,72,73,75,67,68)
+
+par(mfrow=c(1,2))
+hist(h, col = 'lightpink')
+hist(m, col = 'lightpink')
+
+library(stats)
+mood.test(h,m,alternative = 'greater')
+
+dados <- data.frame(
+  Heartbeats = c(h,m),
+  Levels = factor(rep(c("h", "m"), c(length(h), length(m)))))
+
+klotz_test(Heartbeats ~ Levels, data = dados, alternative='greater')
+
+```
+
+<br/>
+
+Pelo teste de Mood, Z=2.14 > 1.64, logo rejeitamos $H_0$ ao nível 5%. Pelo teste de Klotz, Z=2.15 > 1.64, logo também rejeitamos $H_0$. Temos evidências para acreditar que a variância entre os batimentos cardíacos dos homens é maior que a variância entre os batimentos cardíacos das mulheres.
+
+<br/>
+
+### [2] Existe uma diferença significativa nas variâncias de escoamento de água em determinada região (considerando dois momentos distintos no tempo)?
+
+<br/>
+
+Seja X as mensurações de escoamento (em cubic feet/minute) no passado e Y, as mensurações de escoamento no presente. Vamos testar as hipóteses abaixo a 5% de significância.
+
+<br/>
+
+$$H_0: \sigma_x^2 = \sigma_y^2$$
+
+<br/>
+
+$$H_1: \sigma_x^2 \neq \sigma_y^2$$
+
+<br/>
+
+```{r, fig.align='center'}
+
+x = c(39,21,58,46,30,22,17,19)
+y = c(32,36,41,27,35,48,31,28)
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+  
+library(stats)
+mood.test(x,y)
+
+dados <- data.frame(
+  Flow_rates = c(x,y),
+  Levels = factor(rep(c("x", "y"), c(length(x), length(y)))))
+
+klotz_test(Flow_rates ~ Levels, data = dados)
+
+library(coin)
+conover_test(Flow_rates ~ Levels, data = dados)
+
+```
+<br/>
+
+Pelo Mood, rejeitamos $H_0$ (Z = 2.05 > 1.96); pelo teste de postos quadrados (Conover), também rejeitamos $H_0$ (Z=2.21 > 1.96). No entanto, pelo Klotz, um teste com ARE = 1 em relação ao teste F sob normalidade, não rejeitamos $H_0$ (Z = 1.93 < 1.96).
+
+<br/>
+
+### Gibbons & Chakraborti, cap. 9 (11)
+
+<br/>
+
+### [11] Pontuações de pós-graduandos de duas universidades nos processos seletivos (têm a mesma média? Possuem a mesma variância?)
+
+<br/>
+
+Vamos fazer um teste para as médias a 5%. As pontuações de pós graduandos em processos seletivos para cada universidade serão representadas pelas variáveis X e Y. Vamos supor $\theta$ como média e, depois, como variância (faremos testes para ambas).
+
+<br/>
+
+$$H_0: \theta_x = \theta_y$$
+
+<br/>
+
+$$H_1: \theta_x \neq \theta_y $$
+
+<br/>
+
+```{r, fig.align='center'}
+
+x = c(1200, 1220, 1300, 1170, 1080, 1110, 1130)
+y = c(1210, 1180, 1000, 1010, 980, 1400, 1430, 1390, 970)
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink')
+hist(y, col = 'lightpink')
+
+median.test2sample <- function(X,Y){
+AmComb=c(X,Y)
+medAC=median(AmComb)
+A=sum(X>medAC)
+B=sum(Y>medAC)
+m=length(X)
+n=length(Y)
+C=m-A
+D=n-B
+tabMed=matrix(c(A,C,B,D),2,2)
+tabMed
+stab=sum(tabMed)
+if (stab< 20) test= fisher.test(tabMed)
+else test=chisq.test(tabMed)
+return(test) 
+}
+
+median.test2sample(x,y) # p-valor > 0.05 -> nao rejeita hipotese de que as 
+# medianas sao iguais
+
+library(RVAideMemoire)
+fp.test(x,y)
+# p-valor >> 0.05 -> nao rejeita H0 de que as medias sao iguais
+
+
+```
+<br/>
+
+Pelo teste da mediana, obtivemos que p-valor >> 0.05 -> não temos evidências para rejeitar que as medianas de X e Y são iguais; Pelo teste de Posto-Ordem-Robusto, obtivemos p-valor >> 0.05, logo não temos evidências para rejeitar que as médias de ambas as distribuições também são iguais. Vamos agora performar testes para variância.
+
+<br/>
+
+Sejam as hipóteses abaixo. Vamos testá-las a 5%.
+
+<br/>
+
+$$H_0: \sigma_x^2 = \sigma_y^2$$
+
+<br/>
+
+$$H_1: \sigma_x^2 \neq \sigma_y^2$$
+
+<br/>
+
+```{r, fig.align='center'}
+
+library(stats)
+mood.test(x,y)
+
+dados <- data.frame(
+  Scores = c(x,y),
+  Levels = factor(rep(c("x", "y"), c(length(x), length(y)))))
+
+klotz_test(Scores ~ Levels, data = dados)
+
+
+```
+
+<br/>
+
+Pelo Mood, z = -2.40 < -1.96, logo rejeitamos $H_0$. Pelo Klotz, z = -2.16 < -1.96, logo também rejeitamos $H_0$. As evidências sugerem que a variância dos scores de pós graduandos em psicologia da Universidade X é diferente daquela da Universidade Y.
+
+<br/>
+
+### Sprent & Smeeton, cap. 6 (16)
+
+<br/>
+
+### [16] A distribuição do comprimento de sentenças nos livros de Conover e Bradley mostram diferenças na centralidade?
+
+<br/>
+
+Seja X a variável "comprimento das sentenças do livro do Conover" e Y a variável "comprimento das sentenças do livro do Smeeton". Vamos aplicar testes para a média e mediana, conforme as hipóteses definidas abaixo. Vamos fixar um nível de significância de 5%.
+
+<br/>
+
+
+$$H_0: \theta_x = \theta_y$$
+
+<br/>
+
+$$H_1: \theta_x \neq \theta_y $$
+<br/>
+
+```{r, fig.align='center'}
+
+x = c(21, 20, 17, 25, 29, 21, 32, 18, 32, 31) # conover
+y = c(45, 14, 13, 31, 35, 20, 58, 41, 64, 25) # bradley
+
+par(mfrow=c(1,2))
+hist(x, col = 'lightpink', main = 'Conover')
+hist(y, col = 'lightpink', main  = 'Bradley')
+
+median.test2sample <- function(X,Y){
+AmComb=c(X,Y)
+medAC=median(AmComb)
+A=sum(X>medAC)
+B=sum(Y>medAC)
+m=length(X)
+n=length(Y)
+C=m-A
+D=n-B
+tabMed=matrix(c(A,C,B,D),2,2)
+tabMed
+stab=sum(tabMed)
+if (stab< 20) test= fisher.test(tabMed)
+else test=chisq.test(tabMed)
+return(test) 
+}
+
+median.test2sample(x,y) # nao rejeita hipotese de que as medianas sao iguais
+qchisq(0.95, 1)
+
+library(RVAideMemoire)
+fp.test(x,y)
+# p-valor >> 0.05
+
+
+```
+
+<br/>
+
+O teste das medianas retornou estatística qui-quadrado igual a 0.2 < 3.84,logo não rejeitamos a hipótese de que as medianas de X e Y são iguais; Além disso, o teste Posto-Ordem-Robusto retornou p-valor >> 0.05, logo também não rejeitamos que as médias de X e Y são iguais. 
+
+<br/>
+
+### A variâncias dos comprimentos das sentenças diferem de autor para autor?
+
+<br/>
+
+Sejam X e Y como anteriomente definidos. Vamos testar, a 5%, as hipóteses abaixo:
+
+<br/>
+
+$$H_0: \sigma_x^2 = \sigma_y^2$$
+
+<br/>
+
+$$H_1: \sigma_x^2 \neq \sigma_y^2$$
+<br/>
+
+```{r}
+
+dados <- data.frame(
+  Numero = c(x,y),
+  Levels = factor(rep(c("x", "y"), c(length(x), length(y)))))
+
+library(coin)
+ansari_test(Numero~ Levels, data = dados) # variancias diferentes
+
+klotz_test(Numero ~ Levels, data = dados)
+
+
+
+
+```
+<br/>
+
+Tanto pelo teste de Ansari-Bradley quanto pelo teste de Klotz, obtivemos p-valor < 0.05, logo rejeitamos a hipótese de que as variâncias do comprimento das sentenças são iguais para os autores considerados.
+
+<br/>
+
+```{r}
+
+ks.test(x,y) # nao rejeita a hipotese de que x e y foram extraidas da mesma populacao
+
+# nao pode aplicar teste para aleatoriedade pois variaveis nao sao intervalares
+
+# testes para normalidade ----------------------------------
+
+library(nortest)
+ad.test(x)# nao rejeita hipotese de normalidade
+ad.test(y) # nao rejeita hipotese de normalidade
+
+shapiro.test(x) # nao rejeita hipotese de normalidade
+shapiro.test(y) # nao rejeita hipotese de normalidade
+
+```
+<br/>
+
+As evidências sugerem que X e Y seguem distribuições normais que divergem apenas no parâmetro variância.
+
+<br/>
