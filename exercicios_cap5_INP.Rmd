@@ -1,0 +1,353 @@
+---
+title: "Atividades Cap 5"
+author: "Gabriela Paschoal"
+date: "2024-06-29"
+output: pdf_document
+---
+
+# Conover, Cap. 4; pag (256-258) (1a, 2 e 3)
+
+<br/>
+
+```{r, echo=FALSE}
+cochran.mctest <-function(X,alpha=0.05){ # alpha eh o nivel de significancia
+# Entre com a matriz de 0 e 1s
+n=nrow(X)
+G=colSums(X)
+L=rowSums(X)
+G2=G^2
+L2=L^2
+k=length(G)
+N=length(L)
+Q=((k-1)*(k*sum(G2)-sum(G)^2))/(k*sum(L)-sum(L^2))
+p_valor=1-pchisq(Q,k-1)
+print(c("Estatistica Q","p_valor"))
+print(c(Q,p_valor))
+
+if ((p_valor <= alpha)&&(k>2)){
+comb <- combn(k,2)
+nn <- ncol(comb)
+dif <- rep(0, nn)
+for (k1 in 1:nn) {
+            i <- comb[1, k1]
+            j <- comb[2, k1]
+            Xij=X[,c(i,j)]
+            tabij=matrix(0,2,2)# tabela McNemar
+            s1=apply(Xij,1,sum)
+            tabij[1,1]=sum(s1==0)
+            tabij[2,2]=sum(s1==2)
+            s2=Xij[,1]-Xij[,2]
+            tabij[2,1]=sum(s2==1)
+            tabij[1,2]=sum(s2==-1)
+            aux2=mcnemar.test(tabij)  # esta funcao trabalha com os pares concordantes
+            dif[k1] <- aux2$p.value<alpha/nn # Correcao Bonferroni
+        }
+        M=matrix(0,nn,3,dimnames = list(rep("",nn),c("Treat A", "Treat B", "Result")))
+        cat("\nResult = 0: Non-difference;Result = 1: Significative difference\n\n")
+        M[,1]=comb[1,]
+        M[,2]=comb[2,]
+        M[,3]=dif
+        print("Multiple Comparisons")
+        print(M)
+        } 
+}
+
+```
+
+
+## 1 - Teste da Efetividade de Duas Técnicas de Venda Diferentes
+
+```{r include_image, echo=FALSE, fig.cap="", out.width='99%', fig.align='center'}
+knitr::include_graphics('C:/Users/55229/Desktop/faculdade/Inferencia Nao Parametrica/quarta lista/ConoverChap4Ex01.png')
+```
+
+<br/>
+
+Queremos testar a $\alpha = 5\%$:
+
+<br/>
+
+$$H_0: \text{As técnicas são igualmente efetivas } (p_1 = p_2 = ... = p_{12})$$
+
+$$H_1: \text{Existe diferença de efetividade entre as técnicas } (p_1 \neq p_2 \neq ... \neq p_{12})$$
+
+```{r}
+
+tec1<-c(1,1,1,1,1,0,0,0,1,1,0,1)
+tec2<-c(0,1,1,0,0,0,0,0,1,0,0,1)
+
+M<-matrix(data= c(tec1,tec2),byrow=TRUE, ncol = 12)
+M<-t(M)
+
+cochran.mctest(M,0.05)
+
+
+
+```
+<br/>
+
+A distribuição exata de T é difícil de ser calculada. Utilizaremos a aproximação assintótica pela qui-quadrado com 12-1 = 13 graus de liberdade: como p-valor < 0.05, rejeitamos a hipótese de que as técnicas sejam igualmente efetivas.
+
+<br/>
+
+## 2 - Existe diferença entre tratamentos para gripe em marinheiros?
+
+<br/>
+
+Queremos testar, a $\alpha = 5%$ de significância, as hipóteses a seguir:
+
+<br/>
+
+$$H_0: \text{As tratamentos são igualmente efetivos } (p_1 = p_2 = ... = p_{12})$$
+
+$$H_1: \text{Existe diferença de efetividade entre os tratamentos } (p_1 \neq p_2 \neq ... \neq p_{12})$$
+
+```{r}
+
+M<-matrix(c(0,1,0,1,1,0,1,1,1,0,1,1,0,1,0,0,0,0,1,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1,0),
+       nrow = 12, ncol = 3, byrow=TRUE)
+
+cochran.mctest(M,0.05)
+
+library(RVAideMemoire)
+n=nrow(M)
+ntrat=ncol(M)
+response <- as.vector(t(M))
+fact <- gl(ntrat,1,n*ntrat,labels=LETTERS[1:3])
+block <- gl(n,3)
+cochran.qtest(response~fact|block)
+
+
+```
+<br/>
+
+Como p-valor < 0.05, rejeitamos $H_0$. Ainda, pelas comparações múltiplas (teste do Sinal), obtivemos que o tratamento 2 (A) é diferente do tratamento 3 (B).
+
+<br/>
+
+## 3 - Existe diferença de poder entre testes estatísticos?
+
+<br/>
+
+Vamos testar inicialmente as hipóteses abaixo ($\alpha=5\%$):
+
+<br/>
+
+$$H_0: \text{As testes são igualmente poderosos } (p_1 = p_2 = ... = p_{12})$$
+
+$$H_1: \text{Existe diferença de poder entre os testes} (p_1 \neq p_2 \neq ... \neq p_{12})$$
+
+```{r}
+
+M<-matrix(c(rep(c(1,1,1),26), rep(c(1,1,0),6), rep(c(1,0,1),12), rep(c(0,1,1),4),
+       rep(c(0,0,1), 18), rep(c(0,1,0),5), rep(c(1,0,0),7),rep(c(0,0,0),22)),
+       byrow=TRUE, ncol = 3)
+
+cochran.mctest(M,0.05)
+
+
+cochran.mctest(M,0.05)
+
+library(RVAideMemoire)
+n=nrow(M)
+ntrat=ncol(M)
+response <- as.vector(t(M))
+fact <- gl(ntrat,1,n*ntrat,labels=LETTERS[1:3])
+block <- gl(n,3)
+cochran.qtest(response~fact|block)
+
+```
+<br/>
+
+Como p-valor < 0.05, rejeitamos a hipótese de que os testes são igualmente poderosos quando aplicados às populações dos dados. Pelo teste do sinal, sabemos que o teste 2 (B) é diferente do teste 3 (C).
+
+<br/>
+
+## 1 (p.385) - Analisar dados de Nascimentos de Bebês por Estação do Ano
+
+<br/>
+
+## a) Teste de Friedman. Vamos testar as hipóteses abaixo a 5%.
+
+<br/>
+
+$$H_0: \text{A taxa de nascimento é constante } (\theta_1= \theta_2 = \theta_3 = \theta_4)$$
+
+$$H_1: \text{Pelo menos 1 taxa de nascimento é maior que pelo menos outra taxa } (\theta_i > \theta_j), i,j \in (1,2,3,4)$$
+
+```{r}
+library(agricolae)
+
+X<-matrix(c(92,112,94,77,9,11,10,12,98,109,92,81,19,26,19,18,21,22,23,24,58,71,51,62,42,49,44,41), byrow=TRUE, ncol=4)
+X
+
+friedman.test(X)
+qchisq(0.95,3) #0.35
+
+ind=c(rep(1:7,4))
+W=as.factor("Winter")
+Sp=as.factor("Spring")
+Su=as.factor("Summer")
+Fa=as.factor("Fall")
+trat=c(rep("Winter", 7),rep("Spring",7),rep("Summer",7), rep("Fall",7))
+Y=c(X[,1],X[,2],X[,3], X[,4])
+res=friedman(ind,trat,Y)
+res
+
+# tratamentos que compartilham a mesma letra nao sao considerados estatisticamente diferentes entre si
+```
+<br/>
+
+Como 6.913 < 7.81, não rejeitamos a hipótese de a taxa de nascimento é constante com as estações.
+
+<br/>
+
+## b) Teste de Quade. Vamos testar as mesmas hipóteses definidas anteriormente a 5%.
+
+<br/>
+
+```{r}
+quade.test(X)
+qf(0.95, 4-1, (7-1)*(4-1)) # 3.16
+
+```
+<br/>
+
+Como 4.43 > 3.16, rejeitamos $H_0$ a $5\%$ de significância. Temos evidências para acreditar que em pelo menos uma estação a taxa de nascimento é maior que em pelo menos outra estação.
+
+<br/>
+
+## c) Não existe teste universalmente melhor.
+
+<br/>
+
+## 2 - Existe diferenca na dificuldade de listas aplicadas a estudantes?
+
+<br/>
+
+## a) Teste de Friedman. Vamos testar as hipóteses abaixo a 5%.
+
+<br/>
+
+$$H_0: \text{A dificuldade das listas é a mesma } (\theta_1= \theta_2 = ...= \theta_{12})$$
+
+$$H_1: \text{Pelo menos 1 lista é mais difícil que pelo menos outra lista } (\theta_i > \theta_j), i,j \in (1,2,...,12)$$
+
+<br/>
+
+```{r}
+library(agricolae)
+
+X<-matrix(c(18, 7, 13, 15, 12, 11, 15, 10, 14, 9, 8, 10, 14, 6, 14, 10, 11, 9, 16, 8, 12, 9, 6, 11, 16, 5, 16, 12, 12, 9, 10, 11, 13, 9, 9, 13, 20, 10,17,14,18,16,14,16,15,10,14,16
+), byrow=TRUE, ncol=12)
+X
+
+friedman.test(t(X))
+qchisq(0.95,3) 
+
+
+
+```
+<br/>
+
+Estatística qui-quadrado = 18.5 > 7.81 -> rejeitamos a hipótese de que a dificuldade dos testes é a mesma.
+
+<br/>
+
+## b) Teste de Quade. Vamos testar as mesmas hipóteses definidas anteriormente a 5%.
+
+<br/>
+
+```{r}
+quade.test(X)
+qf(0.95, 4-1, (12-1)*(4-1)) 
+
+```
+<br/>
+
+Como F=5.90>2.89, rejeitamos a hipótese de que a dificuldade das listas é a mesma (pelo menos 1 lista é mais difícil que pelo menos outra lista).
+
+<br/>
+
+## 3 - As conclusões pelos p-valores estão de acordo com as conclusões pelas estatísticas de teste.
+
+<br/>
+
+## 4 - Alguns motoristas tendem a emitir menos gases que outros?
+
+<br/>
+
+Vamos testar a 5%:
+
+<br/>
+
+$$H_0: \text{As motoristas emitem a mesma quantidade de gases } (\theta_1= \theta_2 = \theta_3 )$$
+
+$$H_1: \text{Pelo menos 1 motorista emite mais gases que pelo menos outro motorista } \theta_i \neq \theta_j , i,j \in {1,2,3}$$
+
+<br/>
+
+```{r}
+library(agricolae)
+
+X<-matrix(c(6.2, 6.3, 6.0, 12.6, 12.9, 12.7,
+             10.2, 10.6, 9.8, 13.0, 13.1, 13.0,
+             5.6, 5.9, 5.5, 8.1, 8.1, 7.8), byrow=TRUE, ncol=3)
+X
+
+friedman.test(X)
+qchisq(0.95,2) 
+
+ind=c(rep(1:6,3))
+trat=c(rep("1", 6),rep("2",6),rep("3",6))
+Y=c(X[,1],X[,2],X[,3])
+res=friedman(ind,trat,Y)
+res
+
+# tratamentos que compartilham a mesma letra nao sao considerados estatisticamente diferentes entre si
+``` 
+
+<br/>
+
+A estatística qui-quadrado é 9.36 > 5.99 -> rejeitamos a hipótese de que as emissoes por motorista sao as mesmas. Pelas comparações múltiplas, obtivemos que o tratamento 2 (motorista 2) é diferente dos demais.
+
+<br/>
+
+## 5 - Levantamento de mais peso diminui o tremor do braço?
+
+<br/>
+
+$$H_0: \text{O peso não tem efeito no tremor do braço} (\theta_1= ... = \theta_5 )$$
+
+$$H_1: \text{Pelo menos um peso tem efeito diferente de outro peso } \theta_i \neq \theta_j , i,j \in {1,2,3,4,5}$$
+
+<br/>
+
+```{r}
+library(agricolae)
+
+X<-matrix(c(3.01, 2.85, 2.62, 2.63, 2.58,
+             3.47, 3.43, 3.15, 2.83, 2.70,
+             3.35, 3.14, 3.02, 2.71, 2.78,
+             3.10, 2.86, 2.58, 2.49, 2.36,
+             3.41, 3.32, 3.08, 2.96, 2.67,
+             3.07, 3.06, 2.85, 2.50, 2.43), byrow=TRUE, ncol=5)
+X
+
+friedman.test(X)
+qchisq(0.95,4)  #9.49
+
+ind=c(rep(1:6,5))
+trat=c(rep("0", 6),rep("1.25",6),rep("2.5",6), rep("5", 6), rep("7.5", 6))
+Y=c(X[,1],X[,2],X[,3], X[,4], X[,5])
+res=friedman(ind,trat,Y)
+res
+
+# tratamentos que compartilham a mesma letra nao sao considerados estatisticamente diferentes entre si
+``` 
+
+<br/>
+
+A estatística obtida está acima do valor crítico a 95% e 4 graus de liberdade (22.53>9.49), logo rejeitamos $H_0$. O teste das comparações múltiplas sugere que todos os tratamentos (pesos) são diferentes entre si.
+
+
